@@ -13,8 +13,7 @@ class _HomePageState extends State<HomePage> {
   final titleController = TextEditingController();
 
   List taskList = [
-    ['Fazer Janta', false],
-    ['Se Exercitar', false]
+    ['placeholder', false]
   ];
 
   void checkTask(bool? value, int index) {
@@ -32,9 +31,13 @@ class _HomePageState extends State<HomePage> {
   }
 
   void addTask(String title) {
-    setState(() {
-      taskList.insert(0, [title.toUpperCase(), false]);
-    });
+    if (title.trim().isNotEmpty) {
+      setState(() {
+        taskList.insert(0, [title.toUpperCase(), false]);
+      });
+    } else {
+      return;
+    }
   }
 
   @override
@@ -42,7 +45,11 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: Colors.purple[200],
       appBar: AppBar(
-        title: const Center(child: Text('TAREFAS')),
+        backgroundColor: Colors.purple[200],
+        title: const Center(
+            child: Text(
+          'TAREFAS',
+        )),
         elevation: 0,
       ),
       body: taskList.isEmpty
@@ -77,20 +84,34 @@ class _HomePageState extends State<HomePage> {
                         onChecked: (value) => checkTask(value, index)),
                   )),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.purple,
         onPressed: () {
           showDialog(
               context: context,
               builder: (_) => AlertDialog(
                     title: const Text('Adicionar Tarefa'),
-                    content: TextField(
-                      controller: titleController,
-                      onChanged: (value) {
-                        titleController.text = value;
-                      },
-                      decoration: const InputDecoration(
-                          label: Text('Título'), border: OutlineInputBorder()),
+                    content: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: TextField(
+                        controller: titleController,
+                        onSubmitted: (value) {
+                          titleController.text = value;
+                        },
+                        decoration: const InputDecoration(
+                            label: Text('Título'),
+                            border: OutlineInputBorder()),
+                      ),
                     ),
                     actions: [
+                      TextButton(
+                          onPressed: () {
+                            titleController.clear();
+                            Navigator.pop(context);
+                          },
+                          child: const Text(
+                            'Cancelar',
+                            style: TextStyle(fontSize: 10),
+                          )),
                       TextButton(
                           onPressed: () {
                             addTask(titleController.text);
@@ -99,12 +120,16 @@ class _HomePageState extends State<HomePage> {
                           },
                           child: const Text(
                             'Adicionar',
-                            style: TextStyle(fontSize: 16),
+                            style: TextStyle(fontSize: 18),
                           ))
                     ],
                   ));
         },
-        child: const Icon(Icons.add),
+        child: const Icon(
+          Icons.add,
+          color: Colors.white,
+          size: 32,
+        ),
       ),
     );
   }
