@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-
-import '../utils/custom_tile.dart';
+import 'package:todo_app/models/task_model.dart';
+import 'package:todo_app/pages/actual_task_list.dart';
+import 'package:todo_app/utils/new_task_dialog.dart';
+import 'package:todo_app/widgets/empty_list_widget.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -10,34 +13,40 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final titleController = TextEditingController();
-
-  List taskList = [
-    ['placeholder', false]
+  var currentScreen = 0;
+  List<TaskModel> taskList = [
+    TaskModel(title: 'placeHolder', isCompleted: false)
   ];
 
   void checkTask(bool? value, int index) {
     setState(() {
-      taskList[index][1] = !taskList[index][1];
+      taskList[index].isCompleted = !taskList[index].isCompleted;
       final task = taskList.removeAt(index);
       taskList.add(task);
     });
   }
 
-  void removeTask(int index) {
+  void removeTask(TaskModel task) {
     setState(() {
-      taskList.removeAt(index);
+      taskList.remove(task);
     });
   }
 
-  void addTask(String title) {
-    if (title.trim().isNotEmpty) {
+  void addTask(TaskModel task) {
+    if (task.title.trim().isNotEmpty) {
       setState(() {
-        taskList.insert(0, [title.toUpperCase(), false]);
+        taskList.add(task);
+        currentScreen = 0;
       });
     } else {
       return;
     }
+  }
+
+  void changeScreen(int index) {
+    setState(() {
+      currentScreen = index;
+    });
   }
 
   @override
@@ -46,84 +55,27 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: Colors.purple[200],
       appBar: AppBar(
         backgroundColor: Colors.purple[200],
-        title: const Center(
+        title: Center(
             child: Text(
-          'TAREFAS',
+          currentScreen == 0 ? 'TAREFAS A FAZER' : 'TAREFAS FEITAS',
         )),
         elevation: 0,
       ),
-      body: taskList.isEmpty
-          ? Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25),
-                child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Icon(
-                        Icons.sentiment_dissatisfied,
-                        color: Colors.grey[800],
-                        size: 50,
-                      ),
-                      Text(
-                        'Sem tarefas por enquanto, que tal criar uma?',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 28, color: Colors.grey[800]),
-                      )
-                    ]),
-              ),
+      body: currentScreen == 0
+          ? ActualTaskList(
+              taskList: taskList,
+              removeTask: removeTask,
+              checkTask: checkTask,
             )
-          : ListView.builder(
-              itemCount: taskList.length,
-              itemBuilder: (context, index) => Dismissible(
-                    key: ValueKey(index),
-                    onDismissed: (direction) => removeTask(index),
-                    child: CustomTile(
-                        tileText: taskList[index][0],
-                        isCompleted: taskList[index][1],
-                        onChecked: (value) => checkTask(value, index)),
-                  )),
+          : const EmptyListWidget(),
       floatingActionButton: FloatingActionButton(
+        tooltip: 'Adicionar uma Tarefa',
         backgroundColor: Colors.purple,
         onPressed: () {
           showDialog(
-              context: context,
-              builder: (_) => AlertDialog(
-                    title: const Text('Adicionar Tarefa'),
-                    content: Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: TextField(
-                        controller: titleController,
-                        onSubmitted: (value) {
-                          titleController.text = value;
-                        },
-                        decoration: const InputDecoration(
-                            label: Text('Título'),
-                            border: OutlineInputBorder()),
-                      ),
-                    ),
-                    actions: [
-                      TextButton(
-                          onPressed: () {
-                            titleController.clear();
-                            Navigator.pop(context);
-                          },
-                          child: const Text(
-                            'Cancelar',
-                            style: TextStyle(fontSize: 10),
-                          )),
-                      TextButton(
-                          onPressed: () {
-                            addTask(titleController.text);
-                            titleController.clear();
-                            Navigator.pop(context);
-                          },
-                          child: const Text(
-                            'Adicionar',
-                            style: TextStyle(fontSize: 18),
-                          ))
-                    ],
-                  ));
+            context: context,
+            builder: (_) => NewTaskDialog(onAddTask: addTask),
+          );
         },
         child: const Icon(
           Icons.add,
@@ -131,6 +83,29 @@ class _HomePageState extends State<HomePage> {
           size: 32,
         ),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: CurvedNavigationBar(
+          height: 65,
+          backgroundColor: const Color.fromRGBO(206, 147, 216, 1),
+          buttonBackgroundColor: Colors.transparent,
+          color: Colors.deepPurple,
+          animationDuration: const Duration(milliseconds: 300),
+          index: currentScreen,
+          onTap: (index) {
+            changeScreen(index);
+          },
+          items: const [
+            Icon(
+              Icons.list_alt,
+              color: Colors.white,
+              size: 36,
+            ),
+            Icon(
+              Icons.check,
+              color: Colors.white,
+              size: 36,
+            ),
+          ]),
     );
   }
 }
