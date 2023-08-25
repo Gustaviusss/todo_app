@@ -4,16 +4,15 @@ import 'package:todo_app/models/task_model.dart';
 import '../utils/custom_tile.dart';
 import '../widgets/empty_list_widget.dart';
 
-class ActualTaskList extends StatelessWidget {
-  const ActualTaskList(
-      {super.key,
-      required this.taskList,
-      required this.removeTask,
-      required this.checkTask});
+class FinishedTaskList extends StatelessWidget {
+  const FinishedTaskList({
+    super.key,
+    required this.taskList,
+    required this.removeTask,
+  });
 
   final List<TaskModel> taskList;
   final void Function(TaskModel) removeTask;
-  final void Function(bool?, int) checkTask;
 
   @override
   Widget build(BuildContext context) {
@@ -23,17 +22,11 @@ class ActualTaskList extends StatelessWidget {
             itemCount: taskList.length,
             itemBuilder: (context, index) => Dismissible(
                   key: ValueKey(index),
-                  onDismissed: (direction) {
-                    if (direction == DismissDirection.startToEnd) {
-                      checkTask(true, index);
-                    } else if (direction == DismissDirection.endToStart) {
-                      removeTask(taskList[index]);
-                    }
-                  },
+                  onDismissed: (direction) => removeTask(taskList[index]),
                   child: CustomTile(
                       tileText: taskList[index].title,
                       isCompleted: taskList[index].isCompleted,
-                      onChecked: (value) => checkTask(value, index)),
+                      onChecked: (value) {}),
                 ));
   }
 }

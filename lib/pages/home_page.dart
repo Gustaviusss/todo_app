@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app/models/task_model.dart';
 import 'package:todo_app/pages/actual_task_list.dart';
+import 'package:todo_app/pages/finishedTaskList.dart';
 import 'package:todo_app/utils/new_task_dialog.dart';
-import 'package:todo_app/widgets/empty_list_widget.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 
 class HomePage extends StatefulWidget {
@@ -17,18 +17,29 @@ class _HomePageState extends State<HomePage> {
   List<TaskModel> taskList = [
     TaskModel(title: 'placeHolder', isCompleted: false)
   ];
+  List<TaskModel> finishedTaskList = [];
 
   void checkTask(bool? value, int index) {
     setState(() {
       taskList[index].isCompleted = !taskList[index].isCompleted;
       final task = taskList.removeAt(index);
-      taskList.add(task);
+      finishedTaskList.add(task);
+      taskList.remove(task);
     });
   }
 
   void removeTask(TaskModel task) {
     setState(() {
       taskList.remove(task);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          duration: Duration(seconds: 2),
+          content: Text('Tarefa "${task.title}" removida')));
+    });
+  }
+
+  void deleteTask(TaskModel task) {
+    setState(() {
+      finishedTaskList.remove(task);
     });
   }
 
@@ -67,7 +78,10 @@ class _HomePageState extends State<HomePage> {
               removeTask: removeTask,
               checkTask: checkTask,
             )
-          : const EmptyListWidget(),
+          : FinishedTaskList(
+              taskList: finishedTaskList,
+              removeTask: deleteTask,
+            ),
       floatingActionButton: FloatingActionButton(
         tooltip: 'Adicionar uma Tarefa',
         backgroundColor: Colors.purple,
