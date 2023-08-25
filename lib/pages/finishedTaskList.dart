@@ -17,7 +17,11 @@ class FinishedTaskList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return taskList.isEmpty
-        ? const EmptyListWidget()
+        ? const EmptyListWidget(
+            emptyListText:
+                'Quando Você concluir uma tarefa, ela aparecerá aqui.',
+            emptyListIcon: Icons.lightbulb_outline_sharp,
+          )
         : ListView.builder(
             itemCount: taskList.length,
             itemBuilder: (context, index) => Dismissible(

@@ -22,7 +22,7 @@ class CustomTile extends StatelessWidget {
           borderRadius: const BorderRadius.all(Radius.circular(10)),
           color: isCompleted == true
               ? const Color.fromARGB(255, 90, 78, 126)
-              : Colors.deepPurple,
+              : Colors.orange,
         ),
         child: Row(children: [
           Checkbox(
@@ -31,15 +31,17 @@ class CustomTile extends StatelessWidget {
               activeColor: const Color.fromARGB(255, 65, 131, 2),
               value: isCompleted,
               onChanged: onChecked),
-          Text(
-            tileText,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              decoration: isCompleted == true
-                  ? TextDecoration.lineThrough
-                  : TextDecoration.none,
+          Flexible(
+            child: Text(
+              tileText,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+                decoration: isCompleted == true
+                    ? TextDecoration.lineThrough
+                    : TextDecoration.none,
+              ),
             ),
           )
         ]),

@@ -18,7 +18,10 @@ class ActualTaskList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return taskList.isEmpty
-        ? const EmptyListWidget()
+        ? const EmptyListWidget(
+            emptyListText: 'Sem tarefas por enquanto, que tal criar uma?',
+            emptyListIcon: Icons.sentiment_dissatisfied_outlined,
+          )
         : ListView.builder(
             itemCount: taskList.length,
             itemBuilder: (context, index) => Dismissible(

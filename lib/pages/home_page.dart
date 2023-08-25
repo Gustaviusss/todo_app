@@ -31,9 +31,6 @@ class _HomePageState extends State<HomePage> {
   void removeTask(TaskModel task) {
     setState(() {
       taskList.remove(task);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          duration: Duration(seconds: 2),
-          content: Text('Tarefa "${task.title}" removida')));
     });
   }
 
@@ -63,9 +60,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.purple[200],
       appBar: AppBar(
-        backgroundColor: Colors.purple[200],
         title: Center(
             child: Text(
           currentScreen == 0 ? 'TAREFAS A FAZER' : 'TAREFAS FEITAS',
@@ -98,17 +93,26 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: CurvedNavigationBar(
-          height: 65,
-          backgroundColor: const Color.fromRGBO(206, 147, 216, 1),
-          buttonBackgroundColor: Colors.transparent,
-          color: Colors.deepPurple,
-          animationDuration: const Duration(milliseconds: 300),
-          index: currentScreen,
-          onTap: (index) {
-            changeScreen(index);
-          },
-          items: const [
+      bottomNavigationBar:
+          // BottomNavigationBar(
+          //   items: [
+          //     BottomNavigationBarItem(
+          //         icon: Icon(Icons.list_alt), label: 'A Fazer'),
+          //     BottomNavigationBarItem(
+          //         icon: Icon(Icons.checklist_sharp), label: 'Feitas')
+          //   ],
+          // )
+          CurvedNavigationBar(
+              height: 65,
+              backgroundColor: const Color.fromRGBO(206, 147, 216, 1),
+              buttonBackgroundColor: Colors.transparent,
+              color: Colors.deepPurple,
+              animationDuration: const Duration(milliseconds: 300),
+              index: currentScreen,
+              onTap: (index) {
+                changeScreen(index);
+              },
+              items: const [
             Icon(
               Icons.list_alt,
               color: Colors.white,

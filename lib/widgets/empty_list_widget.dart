@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
 class EmptyListWidget extends StatelessWidget {
-  const EmptyListWidget({super.key});
+  const EmptyListWidget(
+      {super.key, required this.emptyListText, required this.emptyListIcon});
+
+  final String emptyListText;
+  final IconData emptyListIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -13,12 +17,12 @@ class EmptyListWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Icon(
-                Icons.sentiment_dissatisfied,
+                emptyListIcon,
                 color: Colors.grey[800],
                 size: 50,
               ),
               Text(
-                'Sem tarefas por enquanto, que tal criar uma?',
+                emptyListText,
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 28, color: Colors.grey[800]),
               )
