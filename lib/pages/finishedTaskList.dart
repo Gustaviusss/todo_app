@@ -5,14 +5,17 @@ import '../utils/custom_tile.dart';
 import '../widgets/empty_list_widget.dart';
 
 class FinishedTaskList extends StatelessWidget {
-  const FinishedTaskList({
-    super.key,
-    required this.taskList,
-    required this.removeTask,
-  });
+  const FinishedTaskList(
+      {super.key,
+      required this.taskList,
+      required this.removeTask,
+      required this.colorTheme,
+      required this.themeIndex});
 
   final List<TaskModel> taskList;
   final void Function(TaskModel) removeTask;
+  final List<Map> colorTheme;
+  final int themeIndex;
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +31,8 @@ class FinishedTaskList extends StatelessWidget {
                   key: ValueKey(index),
                   onDismissed: (direction) => removeTask(taskList[index]),
                   child: CustomTile(
+                      colorTheme: colorTheme,
+                      themeIndex: themeIndex,
                       tileText: taskList[index].title,
                       isCompleted: taskList[index].isCompleted,
                       onChecked: (value) {}),

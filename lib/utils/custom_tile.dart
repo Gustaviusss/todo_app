@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 
 class CustomTile extends StatelessWidget {
-  const CustomTile({
-    super.key,
-    required this.tileText,
-    required this.isCompleted,
-    required this.onChecked,
-  });
+  const CustomTile(
+      {super.key,
+      required this.tileText,
+      required this.isCompleted,
+      required this.onChecked,
+      required this.colorTheme,
+      required this.themeIndex});
 
   final String tileText;
   final bool isCompleted;
   final void Function(bool?)? onChecked;
+  final List<Map> colorTheme;
+  final int themeIndex;
 
   @override
   Widget build(BuildContext context) {
@@ -21,8 +24,8 @@ class CustomTile extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: const BorderRadius.all(Radius.circular(10)),
           color: isCompleted == true
-              ? const Color.fromARGB(255, 90, 78, 126)
-              : Colors.orange,
+              ? colorTheme[themeIndex]['finishedColor']
+              : colorTheme[themeIndex]['mainColor'],
         ),
         child: Row(children: [
           Checkbox(
@@ -37,7 +40,7 @@ class CustomTile extends StatelessWidget {
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: colorTheme[themeIndex]['cardTextColor'],
                 decoration: isCompleted == true
                     ? TextDecoration.lineThrough
                     : TextDecoration.none,

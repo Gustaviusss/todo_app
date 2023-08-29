@@ -9,11 +9,15 @@ class ActualTaskList extends StatelessWidget {
       {super.key,
       required this.taskList,
       required this.removeTask,
-      required this.checkTask});
+      required this.checkTask,
+      required this.colorTheme,
+      required this.themeIndex});
 
   final List<TaskModel> taskList;
   final void Function(TaskModel) removeTask;
   final void Function(bool?, int) checkTask;
+  final List<Map> colorTheme;
+  final int themeIndex;
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +38,8 @@ class ActualTaskList extends StatelessWidget {
                     }
                   },
                   child: CustomTile(
+                      colorTheme: colorTheme,
+                      themeIndex: themeIndex,
                       tileText: taskList[index].title,
                       isCompleted: taskList[index].isCompleted,
                       onChecked: (value) => checkTask(value, index)),
