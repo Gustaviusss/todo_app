@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:todo_app/data/database.dart';
 import 'package:todo_app/models/task_model.dart';
 import 'package:todo_app/pages/actual_task_list.dart';
 import 'package:todo_app/pages/finishedTaskList.dart';
 import 'package:todo_app/utils/new_task_dialog.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import '../theme/theme_constants.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,43 +15,57 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  var currentColorScheme = 0;
+  //acess hive box
+  final _dataBox = Hive.box('dataBox');
+  ToDoDataBase db = ToDoDataBase();
+
   var currentScreen = 0;
-  List<TaskModel> taskList = [
-    TaskModel(title: 'placeHolder', isCompleted: false)
-  ];
-  List<TaskModel> finishedTaskList = [];
+
+  @override
+  void initState() {
+    if (_dataBox.get("TASKLIST") == null) {
+      db.createInitialData();
+    } else {
+      db.loadData();
+    }
+
+    super.initState();
+  }
 
   void checkTask(bool? value, int index) {
     setState(() {
-      taskList[index].isCompleted = !taskList[index].isCompleted;
-      final task = taskList.removeAt(index);
-      finishedTaskList.add(task);
-      taskList.remove(task);
+      db.taskList[index].isCompleted = !db.taskList[index].isCompleted;
+      final task = db.taskList.removeAt(index);
+      db.finishedTaskList.add(task);
+      db.taskList.remove(task);
     });
+    db.updateData();
   }
 
   void removeTask(TaskModel task) {
     setState(() {
-      taskList.remove(task);
+      db.taskList.remove(task);
     });
+    db.updateData();
   }
 
   void deleteTask(TaskModel task) {
     setState(() {
-      finishedTaskList.remove(task);
+      db.finishedTaskList.remove(task);
     });
+    db.updateData();
   }
 
   void addTask(TaskModel task) {
     if (task.title.trim().isNotEmpty) {
       setState(() {
-        taskList.add(task);
+        db.taskList.add(task);
         currentScreen = 0;
       });
     } else {
       return;
     }
+    db.updateData();
   }
 
   void changeScreen(int index) {
@@ -61,16 +76,17 @@ class _HomePageState extends State<HomePage> {
 
   void changeColorScheme(int index) {
     setState(() {
-      currentColorScheme = index;
+      db.currentColorScheme = index;
     });
+    db.updateData();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: colorSchemes[currentColorScheme]['bgColor'],
+      backgroundColor: db.colorSchemes[db.currentColorScheme]['bgColor'],
       appBar: AppBar(
-        backgroundColor: colorSchemes[currentColorScheme]['bgColor'],
+        backgroundColor: db.colorSchemes[db.currentColorScheme]['bgColor'],
         actions: [
           IconButton(
               onPressed: () {
@@ -88,11 +104,11 @@ class _HomePageState extends State<HomePage> {
                             Expanded(
                               flex: 4,
                               child: ListView.builder(
-                                  itemCount: colorSchemes.length,
+                                  itemCount: db.colorSchemes.length,
                                   itemBuilder: (context, index) => Card(
                                         borderOnForeground: true,
                                         elevation: 2,
-                                        color: colorSchemes[index]
+                                        color: db.colorSchemes[index]
                                             ['defaultColor'],
                                         child: GestureDetector(
                                           onTap: () {
@@ -100,9 +116,10 @@ class _HomePageState extends State<HomePage> {
                                           },
                                           child: ListTile(
                                             title: Text(
-                                              colorSchemes[index]['themeName'],
+                                              db.colorSchemes[index]
+                                                  ['themeName'],
                                               style: TextStyle(
-                                                  color: colorSchemes[index]
+                                                  color: db.colorSchemes[index]
                                                       ['cardTextColor']),
                                             ),
                                             leading: const Icon(
@@ -133,34 +150,34 @@ class _HomePageState extends State<HomePage> {
               },
               icon: Icon(
                 Icons.color_lens,
-                color: colorSchemes[currentColorScheme]['iconColor'],
+                color: db.colorSchemes[db.currentColorScheme]['iconColor'],
               ))
         ],
         title: Center(
             child: Text(
           currentScreen == 0 ? 'TAREFAS A FAZER' : 'TAREFAS FEITAS',
-          style:
-              TextStyle(color: colorSchemes[currentColorScheme]['titleColor']),
+          style: TextStyle(
+              color: db.colorSchemes[db.currentColorScheme]['titleColor']),
         )),
         elevation: 0,
       ),
       body: currentScreen == 0
           ? ActualTaskList(
-              colorTheme: colorSchemes,
-              themeIndex: currentColorScheme,
-              taskList: taskList,
+              colorTheme: db.colorSchemes,
+              themeIndex: db.currentColorScheme,
+              taskList: db.taskList,
               removeTask: removeTask,
               checkTask: checkTask,
             )
           : FinishedTaskList(
-              colorTheme: colorSchemes,
-              themeIndex: currentColorScheme,
-              taskList: finishedTaskList,
+              colorTheme: db.colorSchemes,
+              themeIndex: db.currentColorScheme,
+              taskList: db.finishedTaskList,
               removeTask: deleteTask,
             ),
       floatingActionButton: FloatingActionButton(
         tooltip: 'Adicionar uma Tarefa',
-        backgroundColor: colorSchemes[currentColorScheme]['defaultColor'],
+        backgroundColor: db.colorSchemes[db.currentColorScheme]['defaultColor'],
         onPressed: () {
           showDialog(
             context: context,
@@ -176,9 +193,9 @@ class _HomePageState extends State<HomePage> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: CurvedNavigationBar(
           height: 65,
-          backgroundColor: colorSchemes[currentColorScheme]['bgColor'],
+          backgroundColor: db.colorSchemes[db.currentColorScheme]['bgColor'],
           buttonBackgroundColor: Colors.transparent,
-          color: colorSchemes[currentColorScheme]['mainColor'],
+          color: db.colorSchemes[db.currentColorScheme]['mainColor'],
           animationDuration: const Duration(milliseconds: 300),
           index: currentScreen,
           onTap: (index) {
@@ -187,12 +204,12 @@ class _HomePageState extends State<HomePage> {
           items: [
             Icon(
               Icons.list_alt,
-              color: colorSchemes[currentColorScheme]['iconColor'],
+              color: db.colorSchemes[db.currentColorScheme]['iconColor'],
               size: 36,
             ),
             Icon(
               Icons.playlist_add_check,
-              color: colorSchemes[currentColorScheme]['iconColor'],
+              color: db.colorSchemes[db.currentColorScheme]['iconColor'],
               size: 42,
             ),
           ]),

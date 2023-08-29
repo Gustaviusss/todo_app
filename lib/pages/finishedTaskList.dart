@@ -12,7 +12,7 @@ class FinishedTaskList extends StatelessWidget {
       required this.colorTheme,
       required this.themeIndex});
 
-  final List<TaskModel> taskList;
+  final List<dynamic> taskList;
   final void Function(TaskModel) removeTask;
   final List<Map> colorTheme;
   final int themeIndex;

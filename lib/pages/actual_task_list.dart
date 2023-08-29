@@ -13,7 +13,7 @@ class ActualTaskList extends StatelessWidget {
       required this.colorTheme,
       required this.themeIndex});
 
-  final List<TaskModel> taskList;
+  final List<dynamic> taskList;
   final void Function(TaskModel) removeTask;
   final void Function(bool?, int) checkTask;
   final List<Map> colorTheme;
