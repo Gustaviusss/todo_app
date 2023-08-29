@@ -3,7 +3,7 @@ import 'package:hive/hive.dart';
 import 'package:todo_app/data/database.dart';
 import 'package:todo_app/models/task_model.dart';
 import 'package:todo_app/pages/actual_task_list.dart';
-import 'package:todo_app/pages/finishedTaskList.dart';
+import 'package:todo_app/pages/finished_task_list.dart';
 import 'package:todo_app/utils/new_task_dialog.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 

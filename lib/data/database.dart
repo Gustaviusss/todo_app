@@ -26,6 +26,16 @@ class ToDoDataBase {
       'iconColor': Colors.black,
       'finishedColor': const Color.fromARGB(255, 177, 120, 45)
     },
+    {
+      'themeName': 'Vermelho',
+      'bgColor': Colors.red[200],
+      'defaultColor': Colors.red[700],
+      'mainColor': Colors.red,
+      'cardTextColor': Colors.white,
+      'titleColor': Colors.black,
+      'iconColor': Colors.white,
+      'finishedColor': const Color.fromARGB(255, 104, 30, 30)
+    },
   ];
   var currentColorScheme = 0;
 
@@ -61,6 +71,5 @@ class ToDoDataBase {
     _dataBox.put("TASKLIST", taskList);
     _dataBox.put("FINISHEDTASKLIST", finishedTaskList);
     _dataBox.put("CURRENTCOLORS", currentColorScheme);
-    print(_dataBox.values);
   }
 }

@@ -15,8 +15,25 @@ void main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  ToDoDataBase db = ToDoDataBase();
+  final _dataBox = Hive.box('dataBox');
+  @override
+  void initState() {
+    if (_dataBox.get("TASKLIST") == null) {
+      db.createInitialData();
+    } else {
+      db.loadData();
+    }
+    super.initState();
+  }
 
   // This widget is the root of your application.
   @override
@@ -24,12 +41,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: AnimatedSplashScreen(
-          pageTransitionType: PageTransitionType.leftToRight,
+          pageTransitionType: PageTransitionType.fade,
           splashTransition: SplashTransition.fadeTransition,
           splashIconSize: 320,
           centered: true,
           duration: 500,
-          backgroundColor: Colors.white,
+          backgroundColor: db.colorSchemes[db.currentColorScheme]['bgColor'] ??
+              Colors.purple[200],
           splash: Image.asset(fit: BoxFit.fill, 'assets/images/pixel8dark.png'),
           nextScreen: const HomePage()),
     );
