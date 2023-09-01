@@ -6,6 +6,7 @@ import 'package:todo_app/pages/actual_task_list.dart';
 import 'package:todo_app/pages/finished_task_list.dart';
 import 'package:todo_app/utils/new_task_dialog.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -40,6 +41,11 @@ class _HomePageState extends State<HomePage> {
       db.taskList.remove(task);
     });
     db.updateData();
+    Fluttertoast.showToast(
+        fontSize: 16,
+        backgroundColor: db.colorSchemes[db.currentColorScheme]
+            ['finishedColor'],
+        msg: 'Tarefa Concluída');
   }
 
   void removeTask(TaskModel task) {
@@ -47,6 +53,11 @@ class _HomePageState extends State<HomePage> {
       db.taskList.remove(task);
     });
     db.updateData();
+    Fluttertoast.showToast(
+        fontSize: 16,
+        backgroundColor: db.colorSchemes[db.currentColorScheme]
+            ['finishedColor'],
+        msg: 'Tarefa Deletada');
   }
 
   void deleteTask(TaskModel task) {
@@ -54,6 +65,11 @@ class _HomePageState extends State<HomePage> {
       db.finishedTaskList.remove(task);
     });
     db.updateData();
+    Fluttertoast.showToast(
+        fontSize: 16,
+        backgroundColor: db.colorSchemes[db.currentColorScheme]
+            ['finishedColor'],
+        msg: 'Tarefa Deletada');
   }
 
   void addTask(TaskModel task) {
@@ -66,6 +82,11 @@ class _HomePageState extends State<HomePage> {
       return;
     }
     db.updateData();
+    Fluttertoast.showToast(
+        fontSize: 16,
+        backgroundColor: db.colorSchemes[db.currentColorScheme]
+            ['finishedColor'],
+        msg: 'Tarefa Adicionada');
   }
 
   void changeScreen(int index) {
@@ -91,97 +112,119 @@ class _HomePageState extends State<HomePage> {
           IconButton(
               onPressed: () {
                 showDialog(
-                  context: context,
-                  builder: (_) => Dialog(
-                    child: Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: SizedBox(
-                        height: 500,
+                    useSafeArea: true,
+                    context: context,
+                    builder: (_) => Dialog(
+                        backgroundColor: db.colorSchemes[db.currentColorScheme]
+                            ['dialogColor'],
                         child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
                           mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Expanded(
-                              flex: 4,
-                              child: ListView.builder(
-                                  itemCount: db.colorSchemes.length,
-                                  itemBuilder: (context, index) => Card(
-                                        borderOnForeground: true,
-                                        elevation: 2,
-                                        color: db.colorSchemes[index]
-                                            ['defaultColor'],
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            changeColorScheme(index);
-                                          },
-                                          child: ListTile(
-                                            title: Text(
-                                              db.colorSchemes[index]
-                                                  ['themeName'],
-                                              style: TextStyle(
-                                                  color: db.colorSchemes[index]
-                                                      ['cardTextColor']),
-                                            ),
-                                            leading: const Icon(
-                                              Icons.sunny,
-                                              color: Colors.white,
+                            const Padding(
+                                padding: EdgeInsets.all(10),
+                                child: Text(
+                                  'Escolha um Tema',
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                )),
+                            Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: Container(
+                                height: 500,
+                                child: ListView.builder(
+                                    shrinkWrap: true,
+                                    itemCount: db.colorSchemes.length,
+                                    itemBuilder: (context, index) => Card(
+                                          shape: const RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(30))),
+                                          borderOnForeground: true,
+                                          elevation: 2,
+                                          color: db.colorSchemes[index]
+                                              ['defaultColor'],
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              changeColorScheme(index);
+                                            },
+                                            child: ListTile(
+                                              title: Text(
+                                                db.colorSchemes[index]
+                                                    ['themeName'],
+                                                style: const TextStyle(
+                                                    color: Colors.white),
+                                              ),
+                                              leading: Icon(
+                                                db.colorSchemes[index]
+                                                    ['themeIcon'],
+                                                color: Colors.white,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      )),
+                                        )),
+                              ),
                             ),
-                            Expanded(
-                              flex: 1,
-                              child: TextButton(
+                            Padding(
+                                padding: EdgeInsets.only(bottom: 30),
+                                child: TextButton(
                                   onPressed: () {
                                     Navigator.of(context).pop();
                                   },
-                                  child: const Text(
+                                  child: Text(
                                     'Ok',
-                                    style: TextStyle(fontSize: 20),
-                                  )),
-                            )
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        color: db.colorSchemes[
+                                                db.currentColorScheme]
+                                            ['defaultColor']),
+                                  ),
+                                ))
                           ],
-                        ),
-                      ),
-                    ),
-                  ),
-                );
+                        )));
               },
               icon: Icon(
                 Icons.color_lens,
                 color: db.colorSchemes[db.currentColorScheme]['iconColor'],
+                size: 28,
               ))
         ],
-        title: Center(
-            child: Text(
+        title: Text(
           currentScreen == 0 ? 'TAREFAS A FAZER' : 'TAREFAS FEITAS',
           style: TextStyle(
               color: db.colorSchemes[db.currentColorScheme]['titleColor']),
-        )),
+        ),
         elevation: 0,
       ),
-      body: currentScreen == 0
-          ? ActualTaskList(
-              colorTheme: db.colorSchemes,
-              themeIndex: db.currentColorScheme,
-              taskList: db.taskList,
-              removeTask: removeTask,
-              checkTask: checkTask,
-            )
-          : FinishedTaskList(
-              colorTheme: db.colorSchemes,
-              themeIndex: db.currentColorScheme,
-              taskList: db.finishedTaskList,
-              removeTask: deleteTask,
-            ),
+      body: AnimatedCrossFade(
+          firstCurve: Curves.easeInOut,
+          firstChild: ActualTaskList(
+            colorTheme: db.colorSchemes,
+            themeIndex: db.currentColorScheme,
+            taskList: db.taskList,
+            removeTask: removeTask,
+            checkTask: checkTask,
+          ),
+          secondChild: FinishedTaskList(
+            colorTheme: db.colorSchemes,
+            themeIndex: db.currentColorScheme,
+            taskList: db.finishedTaskList,
+            removeTask: deleteTask,
+          ),
+          crossFadeState: currentScreen == 0
+              ? CrossFadeState.showFirst
+              : CrossFadeState.showSecond,
+          duration: const Duration(milliseconds: 300)),
       floatingActionButton: FloatingActionButton(
         tooltip: 'Adicionar uma Tarefa',
         backgroundColor: db.colorSchemes[db.currentColorScheme]['defaultColor'],
         onPressed: () {
           showDialog(
             context: context,
-            builder: (_) => NewTaskDialog(onAddTask: addTask),
+            builder: (_) => NewTaskDialog(
+                onAddTask: addTask,
+                colorThemes: db.colorSchemes,
+                colorIndex: db.currentColorScheme),
           );
         },
         child: const Icon(

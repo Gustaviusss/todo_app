@@ -22,27 +22,31 @@ class ActualTaskList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return taskList.isEmpty
-        ? const EmptyListWidget(
-            emptyListText: 'Sem tarefas por enquanto, que tal criar uma?',
-            emptyListIcon: Icons.sentiment_dissatisfied_outlined,
+        ? const Center(
+            child: EmptyListWidget(
+              emptyListText: 'Sem tarefas por enquanto, que tal criar uma?',
+              emptyListIcon: Icons.sentiment_dissatisfied_outlined,
+            ),
           )
-        : ListView.builder(
-            itemCount: taskList.length,
-            itemBuilder: (context, index) => Dismissible(
-                  key: ValueKey(index),
-                  onDismissed: (direction) {
-                    if (direction == DismissDirection.startToEnd) {
-                      checkTask(true, index);
-                    } else if (direction == DismissDirection.endToStart) {
-                      removeTask(taskList[index]);
-                    }
-                  },
-                  child: CustomTile(
-                      colorTheme: colorTheme,
-                      themeIndex: themeIndex,
-                      tileText: taskList[index].title,
-                      isCompleted: taskList[index].isCompleted,
-                      onChecked: (value) => checkTask(value, index)),
-                ));
+        : Center(
+            child: ListView.builder(
+                itemCount: taskList.length,
+                itemBuilder: (context, index) => Dismissible(
+                      key: ValueKey(taskList[index]),
+                      onDismissed: (direction) {
+                        if (direction == DismissDirection.startToEnd) {
+                          checkTask(true, index);
+                        } else if (direction == DismissDirection.endToStart) {
+                          removeTask(taskList[index]);
+                        }
+                      },
+                      child: CustomTile(
+                          colorTheme: colorTheme,
+                          themeIndex: themeIndex,
+                          tileText: taskList[index].title,
+                          isCompleted: taskList[index].isCompleted,
+                          onChecked: (value) => checkTask(value, index)),
+                    )),
+          );
   }
 }

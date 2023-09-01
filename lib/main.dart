@@ -39,11 +39,12 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(fontFamily: 'Arvo'),
       debugShowCheckedModeBanner: false,
       home: AnimatedSplashScreen(
           pageTransitionType: PageTransitionType.fade,
           splashTransition: SplashTransition.fadeTransition,
-          splashIconSize: 320,
+          splashIconSize: 240,
           centered: true,
           duration: 500,
           backgroundColor: db.colorSchemes[db.currentColorScheme]['bgColor'] ??
